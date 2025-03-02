@@ -71,7 +71,7 @@
 
             document.getElementById("result").innerText = "Processando...";
 
-            fetch("http://127.0.0.1:8000/predict/", {
+            fetch("http://192.168.1.1:0.0.0.0/predict/", {
                 method: "POST",
                 body: formData
             })
