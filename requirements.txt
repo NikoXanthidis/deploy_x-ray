@@ -1,0 +1,6 @@
+fastapi               # Framework web para criar a API
+uvicorn               # Servidor ASGI para rodar a API
+tensorflow            # Para carregar e executar o modelo treinado
+pillow                # Para processar imagens (caso necessário)
+numpy                 # Para manipulação de arrays numéricos
+python-multipart      # Para receber arquivos de imagem no upload

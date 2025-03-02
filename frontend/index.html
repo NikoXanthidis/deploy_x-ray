@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classificação de Imagem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        #container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        #image-preview {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+        input {
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            background: #007BFF;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <h2>Classificação de Imagem</h2>
+        <input type="file" id="image-input" accept="image/*">
+        <br>
+        <img id="image-preview" src="" alt="" style="display:none; max-width: 300px;">
+        <br>
+        <button onclick="uploadImage()">Enviar</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function uploadImage() {
+            let input = document.getElementById("image-input");
+            let file = input.files[0];
+
+            if (!file) {
+                alert("Selecione uma imagem primeiro!");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("file", file);
+
+            document.getElementById("result").innerText = "Processando...";
+
+            fetch("http://127.0.0.1:8000/predict/", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById("result").innerText = "Erro: " + data.error;
+                } else {
+                    document.getElementById("result").innerText = 
+                        "Classe: " + data.class + "\nConfiança: " + (data.confidence * 100).toFixed(2) + "%";
+                }
+            })
+            .catch(error => {
+                document.getElementById("result").innerText = "Erro ao conectar com a API.";
+            });
+        }
+
+        document.getElementById("image-input").addEventListener("change", function(event) {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let img = document.getElementById("image-preview");
+                    img.src = e.target.result;
+                    img.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+</body>
+</html>
